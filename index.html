@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gumkido - Galería de Videos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #050505;
+      --card-bg: #111111;
+      --accent-red: #e60000;
+      --accent-glow: rgba(230, 0, 0, 0.4);
+      --text-main: #f0f0f0;
+      --text-muted: #a0a0a0;
+      --border-color: #222222;
+      
+      /* Colores para los giones */
+      --color-yellow: #ffd700;
+      --color-green: #00cc44;
+      --color-blue: #0088ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* IMÁGENES DE FONDO LATERALES (Tigre y Dragón) */
+    .bg-side {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 300px;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      background-size: cover;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 0 20px rgba(230, 0, 0, 0.4));
+    }
+
+    .bg-left {
+      left: 0;
+      background-image: url('trigre.jpeg');
+      background-position: left center;
+      -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 45%, rgba(0,0,0,0));
+      mask-image: linear-gradient(to right, rgba(0,0,0,1) 45%, rgba(0,0,0,0));
+    }
+
+    .bg-right {
+      right: 0;
+      background-image: url('dragon.jpeg');
+      background-position: right center;
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0));
+      mask-image: linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0));
+    }
+
+    /* HEADER */
+    header {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(180deg, #150202 0%, #050505 100%);
+      border-bottom: 2px solid var(--accent-red);
+      padding: 2.5rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(230, 0, 0, 0.2);
+    }
+
+    .header-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .flags-and-shield {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .flag {
+      width: 90px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .flag:hover {
+      transform: scale(1.08);
+    }
+
+    .shield {
+      width: 130px;
+      height: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px var(--accent-glow));
+      transition: transform 0.4s ease, filter 0.4s ease;
+    }
+
+    .shield:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 20px rgba(230, 0, 0, 0.8));
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 3.2rem;
+      letter-spacing: 6px;
+      color: var(--accent-red);
+      text-transform: uppercase;
+      text-shadow: 0 0 12px var(--accent-glow);
+      line-height: 1.1;
+    }
+
+    .motto {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--accent-red);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(230, 0, 0, 0.3);
+      margin-top: 0.3rem;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1rem 4rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .category-section {
+      margin-bottom: 3.5rem;
+    }
+
+    .category-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--accent-red);
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .category-title::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 24px;
+      background-color: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    /* TARJETA DE VIDEO */
+    .video-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-red);
+      box-shadow: 0 8px 25px rgba(230, 0, 0, 0.25);
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000000;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      outline: none;
+    }
+
+    .video-info {
+      padding: 1.2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .video-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    /* Clases de color dinámicas para los títulos de cada video según su nivel */
+    .title-yellow {
+      color: var(--color-yellow) !important;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    }
+
+    .title-green {
+      color: var(--color-green) !important;
+      text-shadow: 0 0 8px rgba(0, 204, 68, 0.4);
+    }
+
+    .title-blue {
+      color: var(--color-blue) !important;
+      text-shadow: 0 0 8px rgba(0, 136, 255, 0.4);
+    }
+
+    .video-tag {
+      align-self: flex-start;
+      font-size: 0.75rem;
+      color: var(--accent-red);
+      background: rgba(230, 0, 0, 0.1);
+      border: 1px solid rgba(230, 0, 0, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 2;
+      background-color: transparent;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      color: var(--accent-red);
+    }
+
+    .footer-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .footer-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px var(--accent-glow);
+      white-space: nowrap;
+    }
+
+    .footer-disclaimer {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.6;
+      text-shadow: 0 0 8px rgba(230, 0, 0, 0.3);
+      max-width: 850px;
+    }
+
+    @media (max-width: 1000px) {
+      .bg-side {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .motto {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+      }
+      .flags-and-shield {
+        gap: 1rem;
+      }
+      .flag {
+        width: 70px;
+        height: 46px;
+      }
+      .shield {
+        width: 100px;
+        height: 100px;
+      }
+      .footer-brand {
+        font-size: 1.2rem;
+      }
+      .footer-disclaimer {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FONDOS LATERALES: Tigre y Dragón -->
+  <div class="bg-side bg-left"></div>
+  <div class="bg-side bg-right"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="flags-and-shield">
+        <img src="argentina.jpeg" alt="Bandera de Argentina" class="flag">
+        <img src="gumkido_simple.jpeg" alt="Escudo Gumkido" class="shield">
+        <img src="korea simple.jpeg" alt="Bandera de Corea del Sur" class="flag">
+      </div>
+      <div>
+        <h1>GUMKIDO AMK ⛩️</h1>
+        <p class="motto">Velocidad, fuerza, suavidad</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- CATEGORÍA: GIONES -->
+    <section class="category-section">
+      <h2 class="category-title">GIONES</h2>
+      <div class="video-grid">
+
+        <!-- Video 1: AMARILLO -->
+        <article class="video-card">
+          <div class="video-wrapper">
+            <video controls preload="metadata">
+              <source src="2. gion amarillo gundo i gion.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+          <div class="video-info">
+            <h3 class="video-title title-yellow">2. GION AMARILLO GUNDO I GION</h3>
+            <span class="video-tag">Giones</span>
+          </div>
+        </article>
+
+        <!-- Video 2: VERDE -->
+        <article class="video-card">
+          <div class="video-wrapper">
+            <video controls preload="metadata">
+              <source src="3. gion verde gundo sam gion.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+          <div class="video-info">
+            <h3 class="video-title title-green">3. GION VERDE GUNDO SAM GION</h3>
+            <span class="video-tag">Giones</span>
+          </div>
+        </article>
+
+        <!-- Video 3: AZUL -->
+        <article class="video-card">
+          <div class="video-wrapper">
+            <video controls preload="metadata">
+              <source src="4. gion azul gundo sa gion.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+          <div class="video-info">
+            <h3 class="video-title title-blue">4. GION AZUL GUNDO SA GION</h3>
+            <span class="video-tag">Giones</span>
+          </div>
+        </article>
+
+        <!-- Video 4: I DAN -->
+        <article class="video-card">
+          <div class="video-wrapper">
+            <video controls preload="metadata">
+              <source src="6. gion i dan gunkido ryuk gion.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+          <div class="video-info">
+            <h3 class="video-title">6. GION I DAN GUMKIDO RYUK GION</h3>
+            <span class="video-tag">Giones</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- CATEGORÍA: TÉCNICAS -->
+    <section class="category-section">
+      <h2 class="category-title">TÉCNICAS</h2>
+      <div class="video-grid">
+
+        <!-- Video Tecnica: AZUL -->
+        <article class="video-card">
+          <div class="video-wrapper">
+            <video controls preload="metadata">
+              <source src="4. tecnica azul.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+          <div class="video-info">
+            <h3 class="video-title title-blue">4. Tecnica AZUL</h3>
+            <span class="video-tag">Técnicas</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-brand">GUMKIDO AMK ⛩️</div>
+      <div class="footer-disclaimer">
+        Material de consulta interna para práctica y repaso técnico. Registra posibles imperfecciones de ejecución. Contenido carente de aval oficial del Yon Ye Nim. Prohibida su reproducción o distribución ⚠️
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
